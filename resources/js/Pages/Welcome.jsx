@@ -1,8 +1,52 @@
 import React from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import JokeGalaxyCanvas from '../Components/JokeGalaxyCanvas';
 
 export default function Welcome({ canLogin, canRegister }) {
+    const [activeSection, setActiveSection] = React.useState('overview');
+
+    const sections = {
+        overview: {
+            label: 'About the app',
+            badge: 'Overview',
+            title: 'A story-driven joke diary instead of a plain CRUD demo',
+            tagline:
+                'Every feature is framed as part of a narrative so you can confidently explain what the project does and why it is different.',
+            points: [
+                'Blend jokes from a public API with your own entries into one unified timeline.',
+                'Turn basic CRUD into “chapters” you can present like a story instead of a raw database demo.',
+                'Use categories, likes, and filters to show how users shape their own joke universe.',
+            ],
+        },
+        journey: {
+            label: 'User journey',
+            badge: 'User flow',
+            title: 'How a user actually uses this project step by step',
+            tagline:
+                'This section is designed to help you verbally walk your instructor through the app during presentation.',
+            points: [
+                'Start on this Welcome page to explain the theme and invite them to register or log in.',
+                'Go to the jokes page to show filters, importing from the API, and how likes update in real time.',
+                'Finish by showing your own created jokes and how they mix with API jokes inside one clean UI.',
+            ],
+        },
+        tech: {
+            label: 'Tech & features',
+            badge: 'Tech stack',
+            title: 'What is running under the hood for this project',
+            tagline:
+                'Summarize the technologies and final project requirements your app is already covering.',
+            points: [
+                'Backend: Laravel, RESTful controllers, validation, and MySQL persistence.',
+                'Frontend: React + Inertia.js single-page experience, Tailwind CSS styling, Framer Motion animations.',
+                'Extra: External API integration (JokeAPI.dev), caching, protected routes, and full CRUD for jokes.',
+            ],
+        },
+    };
+
+    const current = sections[activeSection];
+
     return (
         <>
             <Head title="Welcome" />
@@ -134,6 +178,85 @@ export default function Welcome({ canLogin, canRegister }) {
                                 .
                             </span>
                         </div>
+
+                        <section className="mt-10 text-left">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                                <div>
+                                    <h2 className="text-sm font-semibold text-slate-100">
+                                        About this project
+                                    </h2>
+                                    <p className="text-xs text-slate-400 max-w-xl">
+                                        Use this interactive section while presenting to quickly explain what
+                                        the app is, how users flow through it, and which technologies you used.
+                                    </p>
+                                </div>
+                                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200">
+                                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span>Presentation helper · click the chips below</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2 mb-4 text-xs">
+                                {Object.entries(sections).map(([key, section]) => (
+                                    <button
+                                        key={key}
+                                        type="button"
+                                        onClick={() => setActiveSection(key)}
+                                        className={`rounded-full border px-3 py-1 transition ${
+                                            activeSection === key
+                                                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-200'
+                                                : 'border-slate-700 text-slate-300 hover:bg-slate-800'
+                                        }`}
+                                    >
+                                        {section.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <motion.div
+                                key={activeSection}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.25, ease: 'easeOut' }}
+                                className="grid gap-4 sm:grid-cols-[minmax(0,1.2fr),minmax(0,1fr)] text-xs"
+                            >
+                                <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                                    <div className="text-[10px] uppercase tracking-wide text-emerald-300 mb-1">
+                                        {current.badge}
+                                    </div>
+                                    <h3 className="text-sm font-semibold text-slate-100 mb-1">
+                                        {current.title}
+                                    </h3>
+                                    <p className="text-slate-400">{current.tagline}</p>
+                                </div>
+                                <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-2">
+                                    {current.points.map((point, idx) => (
+                                        <div key={idx} className="flex gap-2 items-start">
+                                            <span className="mt-[3px] h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                                            <p className="text-slate-300">{point}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.1fr),minmax(0,1fr)] items-center">
+                                <div className="space-y-2 text-xs text-slate-400">
+                                    <h3 className="text-sm font-semibold text-slate-100">
+                                        3D joke galaxy (Three.js style)
+                                    </h3>
+                                    <p>
+                                        This mini 3D scene is powered by WebGL using the Three.js library. Move
+                                        your mouse over the card and explain that your frontend can render real
+                                        3D graphics, not just flat HTML.
+                                    </p>
+                                    <p>
+                                        You can mention here that this is similar to the interactive 3D examples
+                                        your instructor referenced, but adapted to fit your joke-universe theme.
+                                    </p>
+                                </div>
+                                <JokeGalaxyCanvas />
+                            </div>
+                        </section>
                     </motion.div>
                 </main>
             </div>
