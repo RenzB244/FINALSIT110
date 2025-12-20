@@ -56,9 +56,13 @@ export default function Welcome({ canLogin, canRegister }) {
 
                 <header className="px-4 sm:px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-black font-bold text-xl">
+                        <motion.span
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 text-black font-bold text-xl"
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                        >
                             😂
-                        </span>
+                        </motion.span>
                         <div className="leading-tight">
                             <div className="font-semibold tracking-tight">
                                 Cosmic Joke Chronicles
@@ -89,7 +93,12 @@ export default function Welcome({ canLogin, canRegister }) {
                     )}
                 </header>
 
-                <main className="flex-1 flex flex-col items-center justify-center px-4 py-10">
+                <motion.main
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    className="flex-1 flex flex-col items-center justify-center px-4 py-10"
+                >
                     <motion.div
                         className="max-w-3xl text-center space-y-6"
                         initial={{ opacity: 0, y: 20 }}
@@ -113,48 +122,58 @@ export default function Welcome({ canLogin, canRegister }) {
                             CRUD control.
                         </p>
 
-                        <div className="grid gap-4 sm:grid-cols-3 text-left mt-6">
+                        {/* Infinite marquee scroll for chapter cards */}
+                        <div className="overflow-hidden mt-6">
                             <motion.div
-                                className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"
-                                whileHover={{ y: -4, scale: 1.02 }}
-                                transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+                                className="flex gap-4"
+                                animate={{ x: ['0%', '-100%'] }}
+                                transition={{ duration: 25, ease: 'linear', repeat: Infinity }}
                             >
-                                <div className="text-xs font-semibold text-emerald-300 mb-1">
-                                    CHAPTER 1
-                                </div>
-                                <div className="text-sm font-medium mb-1">Discover the Feed</div>
-                                <p className="text-xs text-slate-400">
-                                    Fetch curated jokes from the public API and see them woven into
-                                    a themed experience instead of just a boring list.
-                                </p>
-                            </motion.div>
-                            <motion.div
-                                className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"
-                                whileHover={{ y: -4, scale: 1.02 }}
-                                transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-                            >
-                                <div className="text-xs font-semibold text-sky-300 mb-1">
-                                    CHAPTER 2
-                                </div>
-                                <div className="text-sm font-medium mb-1">Write Your Own</div>
-                                <p className="text-xs text-slate-400">
-                                    Log in to create, edit, and delete your own jokes, attach
-                                    categories, and blend them with API jokes.
-                                </p>
-                            </motion.div>
-                            <motion.div
-                                className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"
-                                whileHover={{ y: -4, scale: 1.02 }}
-                                transition={{ type: 'spring', stiffness: 220, damping: 18 }}
-                            >
-                                <div className="text-xs font-semibold text-violet-300 mb-1">
-                                    CHAPTER 3
-                                </div>
-                                <div className="text-sm font-medium mb-1">Curate Your Galaxy</div>
-                                <p className="text-xs text-slate-400">
-                                    Like and import favorites into your own collection and watch
-                                    your joke universe grow over time.
-                                </p>
+                                {[...Array(2)].map((_, i) => (
+                                    <React.Fragment key={i}>
+                                        <motion.div
+                                            className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 min-w-[250px]"
+                                            whileHover={{ scale: 1.05 }}
+                                        >
+                                            <div className="text-xs font-semibold text-emerald-300 mb-1">
+                                                CHAPTER 1
+                                            </div>
+                                            <div className="text-sm font-medium mb-1">Discover the Feed</div>
+                                            <p className="text-xs text-slate-400">
+                                                Fetch curated jokes from the public API and see them woven into
+                                                a themed experience instead of just a boring list.
+                                            </p>
+                                        </motion.div>
+
+                                        <motion.div
+                                            className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 min-w-[250px]"
+                                            whileHover={{ scale: 1.05 }}
+                                        >
+                                            <div className="text-xs font-semibold text-sky-300 mb-1">
+                                                CHAPTER 2
+                                            </div>
+                                            <div className="text-sm font-medium mb-1">Write Your Own</div>
+                                            <p className="text-xs text-slate-400">
+                                                Log in to create, edit, and delete your own jokes, attach
+                                                categories, and blend them with API jokes.
+                                            </p>
+                                        </motion.div>
+
+                                        <motion.div
+                                            className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 min-w-[250px]"
+                                            whileHover={{ scale: 1.05 }}
+                                        >
+                                            <div className="text-xs font-semibold text-violet-300 mb-1">
+                                                CHAPTER 3
+                                            </div>
+                                            <div className="text-sm font-medium mb-1">Curate Your Galaxy</div>
+                                            <p className="text-xs text-slate-400">
+                                                Like and import favorites into your own collection and watch
+                                                your joke universe grow over time.
+                                            </p>
+                                        </motion.div>
+                                    </React.Fragment>
+                                ))}
                             </motion.div>
                         </div>
 
@@ -190,18 +209,23 @@ export default function Welcome({ canLogin, canRegister }) {
                                         the app is, how users flow through it, and which technologies you used.
                                     </p>
                                 </div>
-                                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200">
+                                <motion.div
+                                    className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-[11px] text-emerald-200"
+                                    animate={{ scale: [1, 1.05, 1] }}
+                                    transition={{ duration: 2, repeat: Infinity }}
+                                >
                                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                                     <span>Presentation helper · click the chips below</span>
-                                </div>
+                                </motion.div>
                             </div>
 
                             <div className="flex flex-wrap gap-2 mb-4 text-xs">
                                 {Object.entries(sections).map(([key, section]) => (
-                                    <button
+                                    <motion.button
                                         key={key}
                                         type="button"
                                         onClick={() => setActiveSection(key)}
+                                        whileTap={{ scale: 0.95 }}
                                         className={`rounded-full border px-3 py-1 transition ${
                                             activeSection === key
                                                 ? 'border-emerald-500 bg-emerald-500/10 text-emerald-200'
@@ -209,7 +233,7 @@ export default function Welcome({ canLogin, canRegister }) {
                                         }`}
                                     >
                                         {section.label}
-                                    </button>
+                                    </motion.button>
                                 ))}
                             </div>
 
@@ -231,10 +255,16 @@ export default function Welcome({ canLogin, canRegister }) {
                                 </div>
                                 <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-2">
                                     {current.points.map((point, idx) => (
-                                        <div key={idx} className="flex gap-2 items-start">
+                                        <motion.div
+                                            key={idx}
+                                            className="flex gap-2 items-start"
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ duration: 0.3, delay: idx * 0.1 }}
+                                        >
                                             <span className="mt-[3px] h-1.5 w-1.5 rounded-full bg-emerald-400" />
                                             <p className="text-slate-300">{point}</p>
-                                        </div>
+                                        </motion.div>
                                     ))}
                                 </div>
                             </motion.div>
@@ -254,14 +284,17 @@ export default function Welcome({ canLogin, canRegister }) {
                                         your instructor referenced, but adapted to fit your joke-universe theme.
                                     </p>
                                 </div>
-                                <JokeGalaxyCanvas />
+                                <motion.div
+                                    whileHover={{ rotateY: 5, rotateX: -5 }}
+                                    transition={{ type: 'spring', stiffness: 150, damping: 12 }}
+                                >
+                                    <JokeGalaxyCanvas />
+                                </motion.div>
                             </div>
                         </section>
                     </motion.div>
-                </main>
+                </motion.main>
             </div>
         </>
     );
 }
-
-

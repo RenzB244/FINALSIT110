@@ -21,6 +21,7 @@
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
         "framer-motion": "^10.16.4",
+        "react-intersection-observer": "^10.0.0",
         "three": "^0.182.0"
     }
 }

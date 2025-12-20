@@ -1,8 +1,33 @@
 import React from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
 import AppLayout from '../../Layouts/AppLayout';
 import JokePage from '../../Components/JokePage';
+
+function AnimatedJoke({ joke, reverse, isUserJoke }) {
+    const { ref, inView } = useInView({
+        threshold: 0.5, // ✅ 50% of the element must be visible
+        triggerOnce: false,
+    });
+
+    return (
+        <motion.div
+            ref={ref}
+            initial={{ opacity: 0, scale: 0.95, y: 40 }}
+            animate={
+                inView
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : { opacity: 0, scale: 0.95, y: 40 }
+            }
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            whileHover={{ scale: 1.02, y: -5 }}
+        >
+            <JokePage joke={joke} reverse={reverse} isUserJoke={isUserJoke} />
+        </motion.div>
+    );
+}
+
 
 export default function Index({ jokes, categories, apiJokes, filters }) {
     const { url } = usePage();
@@ -10,14 +35,8 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
     const applyFilter = (name, value) => {
         router.get(
             route('jokes.index'),
-            {
-                ...filters,
-                [name]: value,
-            },
-            {
-                preserveState: true,
-                replace: true,
-            }
+            { ...filters, [name]: value },
+            { preserveState: true, replace: true }
         );
     };
 
@@ -30,13 +49,7 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
     };
 
     const likeJoke = (id) => {
-        router.post(
-            route('jokes.like', id),
-            {},
-            {
-                preserveScroll: true,
-            }
-        );
+        router.post(route('jokes.like', id), {}, { preserveScroll: true });
     };
 
     const isMyJokesMode = !!filters.my_jokes || filters.source === 'user';
@@ -69,6 +82,7 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                         </Link>
                     </div>
 
+                    {/* Filters */}
                     <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 space-y-3 text-xs">
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="text-slate-300 font-medium mr-2">Story filters:</span>
@@ -148,13 +162,24 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                         </div>
                     </div>
 
+                    {/* Joke list */}
                     {!isMyJokesMode && (
-                        <div className="space-y-3">
+                        <motion.div
+                            className="space-y-3"
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                        >
                             <h2 className="text-sm font-semibold text-slate-100">
                                 Your curated joke chapters
                             </h2>
                             {jokes.data.length === 0 ? (
-                                <p className="text-xs text-slate-400 border border-dashed border-slate-800 rounded-xl p-4">
+                                <motion.p
+                                    className="text-xs text-slate-400 border border-dashed border-slate-800 rounded-xl p-4"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.4 }}
+                                >
                                     No jokes here yet. Try clearing some filters or{' '}
                                     <Link
                                         href={route('jokes.create')}
@@ -163,7 +188,7 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                                         write your first chapter
                                     </Link>
                                     .
-                                </p>
+                                </motion.p>
                             ) : (
                                 <div className="grid gap-3">
                                     {jokes.data.map((joke, index) => (
@@ -173,10 +198,10 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{
-                                                duration: 0.2,
-                                                delay: index * 0.03,
+                                                duration: 0.25,
+                                                delay: index * 0.05,
                                             }}
-                                            whileHover={{ y: -3, borderColor: '#22c55e55' }}
+                                            whileHover={{ y: -3, borderColor: '#22c55e55', scale: 1.02 }}
                                         >
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
@@ -191,9 +216,9 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                                                 <button
                                                     type="button"
                                                     onClick={() => likeJoke(joke.id)}
-                                                    className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-200 hover:bg-emerald-500/20 transition"
+                                                                                                        className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-1 text-[11px] text-emerald-200 hover:bg-emerald-500/20 transition"
                                                 >
-                                                    <span>❤️</span>
+                                                    <span>add to favorite</span>
                                                     <span>{joke.likes}</span>
                                                 </button>
                                             </div>
@@ -230,14 +255,20 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                             )}
 
                             {jokes.links.length > 3 && (
-                                <div className="flex flex-wrap gap-1 mt-2 text-xs">
+                                <motion.div
+                                    className="flex flex-wrap gap-1 mt-2 text-xs"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.4, delay: 0.2 }}
+                                >
                                     {jokes.links.map((link, index) => (
-                                        <button
-                                            // eslint-disable-next-line react/no-array-index-key
+                                        <motion.button
                                             key={index}
                                             type="button"
                                             disabled={!link.url}
                                             onClick={() => link.url && router.visit(link.url)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
                                             className={`px-3 py-1 rounded-full border text-xs ${
                                                 link.active
                                                     ? 'border-emerald-500 bg-emerald-500/10 text-emerald-200'
@@ -246,45 +277,67 @@ export default function Index({ jokes, categories, apiJokes, filters }) {
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                         />
                                     ))}
-                                </div>
+                                </motion.div>
                             )}
-                        </div>
+                        </motion.div>
                     )}
                 </section>
             </div>
 
-            <section className="mt-10 max-w-6xl mx-auto text-center">
-                <div className="mb-3">
+            {/* Full-screen JokePage section */}
+            <motion.section
+                className="mt-10 max-w-6xl mx-auto text-center"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+            >
+                <motion.div
+                    className="mb-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
                     <h2 className="text-sm font-semibold text-slate-100">
                         {fullScreenHeading}
                     </h2>
                     <p className="text-[11px] text-slate-400">
                         {fullScreenSubheading}
                     </p>
-                </div>
+                </motion.div>
 
                 {fullScreenJokes.length === 0 ? (
-                    <p className="text-xs text-slate-400 border border-dashed border-slate-800 rounded-xl p-4 text-center">
+                    <motion.p
+                        className="text-xs text-slate-400 border border-dashed border-slate-800 rounded-xl p-4 text-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                    >
                         {isMyJokesMode
                             ? 'No jokes to display here yet. Try creating a joke above first.'
                             : 'API jokes are currently unavailable. This might be a network issue or the public API being down. Your saved jokes still work offline.'}
-                    </p>
+                    </motion.p>
                 ) : (
-                    <div className="mt-4 space-y-0">
+                    <motion.div
+                        className="mt-4 space-y-0"
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                            hidden: {},
+                            visible: { transition: { staggerChildren: 0.1 } },
+                        }}
+                    >
                         {fullScreenJokes.map((joke, index) => (
-                            <JokePage
-                                // eslint-disable-next-line react/no-array-index-key
+                            <AnimatedJoke
                                 key={index}
                                 joke={joke}
                                 reverse={index % 2 === 1}
                                 isUserJoke={isMyJokesMode}
                             />
                         ))}
-                    </div>
+                    </motion.div>
+
                 )}
-            </section>
+            </motion.section>
         </AppLayout>
     );
 }
-
-
